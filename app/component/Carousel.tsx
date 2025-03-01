@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,13 +12,13 @@ const Carousel = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000); // Change image every 3 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]); // Added images.length as dependency
 
   return (
-    <div className="relative w-full h-96 overflow-hidden"> {/* Increased height here */}
+    <div className="relative w-full h-96 overflow-hidden">
       <div
         className="flex transition-all duration-500"
         style={{
@@ -26,10 +27,13 @@ const Carousel = () => {
       >
         {images.map((image, index) => (
           <div key={index} className="w-full h-full flex-shrink-0">
-            <img
+            <Image
               src={image}
               alt={`carousel-image-${index}`}
-              className="object-cover w-full h-full"
+              className="object-cover"
+              width={900} // Adjust width as needed
+              height={400} // Adjust height as needed
+              layout="responsive" // Maintains responsiveness
             />
           </div>
         ))}
@@ -40,7 +44,9 @@ const Carousel = () => {
           <div
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`h-2 w-2 rounded-full bg-white cursor-pointer ${currentIndex === index ? 'bg-opacity-80' : 'bg-opacity-50'}`}
+            className={`h-2 w-2 rounded-full bg-white cursor-pointer ${
+              currentIndex === index ? 'bg-opacity-80' : 'bg-opacity-50'
+            }`}
           ></div>
         ))}
       </div>

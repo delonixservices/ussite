@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '../component/Navbar';
 
@@ -14,7 +14,8 @@ interface Flight {
   toDestination: string;
 }
 
-const About: React.FC = () => {
+// This component contains the dynamic logic that uses useSearchParams.
+const FlightDetails: React.FC = () => {
   const searchParams = useSearchParams();
   const [flight, setFlight] = useState<Flight | null>(null);
   const [numOfPeople, setNumOfPeople] = useState<number>(1);
@@ -23,8 +24,12 @@ const About: React.FC = () => {
     const flightParam = searchParams.get('flight');
     const numOfPeopleParam = searchParams.get('numOfPeople');
     if (flightParam) {
-      const decodedFlight = JSON.parse(decodeURIComponent(flightParam));
-      setFlight(decodedFlight);
+      try {
+        const decodedFlight = JSON.parse(decodeURIComponent(flightParam));
+        setFlight(decodedFlight);
+      } catch (error) {
+        console.error('Error decoding flight parameter:', error);
+      }
     }
     if (numOfPeopleParam) {
       setNumOfPeople(parseInt(numOfPeopleParam, 10));
@@ -36,8 +41,7 @@ const About: React.FC = () => {
   }
 
   return (
-    <>
-      <Navbar />
+    <div>
       <div
         className="section"
         style={{
@@ -117,30 +121,27 @@ const About: React.FC = () => {
                       className="border border-gray-300 rounded-lg p-2 col-span-2"
                       required
                     />
-                   
-              <div className="grid grid-cols gap-6 mb-6">
-                <select
-                  className="border border-gray-300 rounded-lg p-2"
-                  required
-                >
-                  <option value="">Select Payment Method</option>
-                  <option value="credit_card">Credit Card</option>
-                  <option value="debit_card">Debit Card</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="bank_transfer">Bank Transfer</option>
-                </select>
-                <input
-                  type="text"
-                  placeholder="Card Number (if applicable)"
-                  className="border border-gray-300 rounded-lg p-2"
-                />
-              </div>
-
+                    <div className="grid grid-cols gap-6 mb-6">
+                      <select
+                        className="border border-gray-300 rounded-lg p-2"
+                        required
+                      >
+                        <option value="">Select Payment Method</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="debit_card">Debit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Card Number (if applicable)"
+                        className="border border-gray-300 rounded-lg p-2"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
 
-              
               <button
                 type="submit"
                 className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
@@ -151,8 +152,25 @@ const About: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+// The main About component renders the Navbar and FlightDetails.
+const About: React.FC = () => {
+  return (
+    <>
+      <Navbar />
+      <FlightDetails />
     </>
   );
 };
 
-export default About;
+// Wrap the About component in a Suspense boundary so that useSearchParams() is safely used.
+export default function AboutPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading flight details...</div>}>
+      <About />
+    </Suspense>
+  );
+}
