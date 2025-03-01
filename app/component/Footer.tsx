@@ -1,4 +1,4 @@
-import Image from 'next/image'; // For optimized image rendering
+ // For optimized image rendering
 import Link from 'next/link'; // For Next.js Link component
 
 const Footer = () => {
