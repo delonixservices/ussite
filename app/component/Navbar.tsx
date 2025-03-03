@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`bg-transparent fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center shadow-lg border-2 ${
+      className={`bg-transparent fixed top-0 left-0 right-0 z-20 p-0 flex justify-between items-center shadow-lg border-2 ${
         sparkEffect ? 'border-yellow-500 animate-pulse' : 'border-gray-300'
       }`}
     >

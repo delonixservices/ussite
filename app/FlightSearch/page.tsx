@@ -29,14 +29,15 @@ const FlightSearch = () => {
     <div>
     {/* Hero Section */}
     <div
-      className="bg-cover bg-center"
+      className="bg-cover bg-center "
       style={{
         backgroundImage:
           "url(/images/airplane-flying-clouds-sunset-light.jpg)",
+         
       }}
     >
-      <div className="flex items-center justify-center h-[85vh] bg-black bg-opacity-50">
-        <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-full max-w-6xl">
+      <div className="flex items-center justify-center h-[95vh] bg-black bg-opacity-50 ">
+        <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-full max-w-6xl mt-12">
           <h1 className="text-4xl font-bold text-center text-white py-4">
             Book Your Trip with Us
           </h1>
