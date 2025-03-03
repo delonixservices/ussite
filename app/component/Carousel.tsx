@@ -4,9 +4,10 @@ import Image from 'next/image';
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    'https://img.freepik.com/free-photo/closeup-shot-airplane-wing-mountains_181624-40966.jpg?t=st=1739879236~exp=1739882836~hmac=7087c78c6c92496d74bffe89b07f2266c2185c132fcd02597bd83449e15030bf&w=900',
-    'https://img.freepik.com/free-photo/people-air-plane-ready-leave_23-2148255995.jpg?t=st=1739878012~exp=1739881612~hmac=05c7b4a49eadc7b2685977789de87f5363558620d3eac94c7f86e2496a33897a&w=900',
-    'https://img.freepik.com/free-photo/inside-train-closeup-with-blurred-background_23-2148242291.jpg?t=st=1739878022~exp=1739881622~hmac=a308560d455b2cacb502b04f5f56b6d4e7efc58d547990b6f6732b2431e00ec4&w=996',
+    '.images/airplane-boarding-pass_23-2148255991.jpg',
+    '.images/people-air-plane-ready-leave_23-2148255995.jpg', 
+    '.images/inside-train-closeup-with-blurred-background_23-2148242291.jpg',
+    
   ];
 
   useEffect(() => {

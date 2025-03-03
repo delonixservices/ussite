@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+
 
 const FlightSearch = () => {
   const [fromLocation, setFromLocation] = useState('');
@@ -32,7 +32,7 @@ const FlightSearch = () => {
         className="bg-cover bg-center"
         style={{
           backgroundImage:
-            'url(https://img.freepik.com/free-photo/airplane-miniature-notepad-world-map-laptop-wooden-table_169016-50744.jpg?w=900)',
+            'url(/images/airplane-flying-clouds-sunset-light.jpg)',
         }}
       >
         <div className="flex items-center justify-center h-[85vh] bg-black bg-opacity-50">
@@ -135,32 +135,7 @@ const FlightSearch = () => {
         </div>
       </div>
 
-      {/* Top Destinations Section */}
-      <div className="section-two flex flex-col mt-0 py-16 bg-gray-100">
-        <h1 className="text-4xl font-extrabold text-center text-indigo-600 -mt-9 mb-6">
-          Top Destinations
-        </h1>
-        <p className="text-lg text-gray-700 text-center mx-auto">
-          Explore the world with our curated list of destinations.
-        </p>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            'https://img.freepik.com/free-photo/3d-view-sun-sky-from-airplane_23-2150953581.jpg?w=996',
-            'https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&auto=format&fit=crop&w=927&q=80',
-            'https://img.freepik.com/free-photo/plane-flying-sky_1359-165.jpg?w=996',
-          ].map((src, idx) => (
-            <div key={idx} className="grid gap-4">
-              <Image
-                className="h-auto max-w-full rounded-lg object-cover object-center"
-                src={src}
-                alt={`Gallery ${idx}`}
-                width={400}
-                height={300}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+     
     </div>
   );
 };
