@@ -4,10 +4,9 @@ import Image from 'next/image';
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    '.images/airplane-boarding-pass_23-2148255991.jpg',
-    '.images/people-air-plane-ready-leave_23-2148255995.jpg', 
-    '.images/inside-train-closeup-with-blurred-background_23-2148242291.jpg',
-    
+    '/images/phil-mosley-wOK2f2stPDg-unsplash.jpg',
+    '/images/pascal-meier-UYiesSO4FiM-unsplash.jpg',
+    '/images/airplane-aircraft-travel-trip.jpg',
   ];
 
   useEffect(() => {
@@ -16,10 +15,10 @@ const Carousel = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [images.length]); // Added images.length as dependency
+  }, [images.length]);
 
   return (
-    <div className="relative w-full h-96 overflow-hidden">
+    <div className="relative w-full overflow-hidden">
       <div
         className="flex transition-all duration-500"
         style={{
@@ -27,14 +26,18 @@ const Carousel = () => {
         }}
       >
         {images.map((image, index) => (
-          <div key={index} className="w-full h-full flex-shrink-0">
+          <div
+            key={index}
+            className="w-full h-[30vh] sm:h-[100vh] md:h-[70vh] flex-shrink-0"
+          >
             <Image
               src={image}
               alt={`carousel-image-${index}`}
               className="object-cover"
-              width={900} // Adjust width as needed
-              height={400} // Adjust height as needed
-              layout="responsive" // Maintains responsiveness
+              width={100}
+              height={100}
+              layout="responsive"
+              objectFit="cover"
             />
           </div>
         ))}
