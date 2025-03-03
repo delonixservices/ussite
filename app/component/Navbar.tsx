@@ -30,11 +30,11 @@ const Navbar = () => {
       <div className="flex items-center">
         {/* Replaced <img> with <Image /> */}
         <Image 
-          src="/path/to/logo.png" 
+          src="/images/pic.png" 
           alt="Logo" 
-          width={32} 
-          height={32} // Replace with actual dimensions of your logo
-          priority // Ensures the logo is loaded eagerly
+          width={50} 
+          height={50} // Replace with actual dimensions of your logo
+         
         />
       </div>
 

@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '../component/Navbar';
 import Filters from '../component/Filters';
+import Image from 'next/image';
 
 interface Flight {
   id: number;
@@ -24,7 +25,7 @@ interface FlightDetails {
   flights: Flight[];
 }
 
-const FlightResults: React.FC = () => {
+const FlightResultsContent: React.FC = () => {
   const searchParams = useSearchParams();
   const [flightDetails, setFlightDetails] = useState<FlightDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,9 +36,7 @@ const FlightResults: React.FC = () => {
   const [departureDate, setDepartureDate] = useState<string>('');
   const [returnDate, setReturnDate] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('price');
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [flightsPerPage] = useState<number>(5);
-  const [showFilters, setShowFilters] = useState<boolean>(false); // State for mobile filter toggle
+  const [showFilters, setShowFilters] = useState<boolean>(false);
 
   useEffect(() => {
     const from = searchParams.get('fromLocation');
@@ -90,7 +89,7 @@ const FlightResults: React.FC = () => {
 
       const updatedFlightDetails: FlightDetails = { ...mockData, flights: filteredFlights };
       setFlightDetails(updatedFlightDetails);
-    } catch (error) {
+    } catch {
       setError('Failed to fetch flight data. Please try again.');
     } finally {
       setLoading(false);
@@ -110,8 +109,8 @@ const FlightResults: React.FC = () => {
   };
 
   const isReturnDateValid = (date: string) => {
-    if (!departureDate) return true; // If no departure date, allow any return date
-    return date >= departureDate; // Return date must be same or after departure date
+    if (!departureDate) return true;
+    return date >= departureDate;
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -128,12 +127,6 @@ const FlightResults: React.FC = () => {
         return flights;
     }
   };
-
-  const indexOfLastFlight = currentPage * flightsPerPage;
-  const indexOfFirstFlight = indexOfLastFlight - flightsPerPage;
-  const currentFlights = flightDetails?.flights.slice(indexOfFirstFlight, indexOfLastFlight);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (loading) {
     return (
@@ -164,80 +157,76 @@ const FlightResults: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="section flex flex-col md:flex-row  " style={{
-          backgroundImage:
-            'url(https://img.freepik.com/free-photo/pouch-map-toy-airplane-blue-background-with-space-writing-text_23-2147958180.jpg?t=st=1740117891~exp=1740121491~hmac=e2fcdfcb5408980389f834de1141a98417ce0d2bd5e3f4612ba8f44f948363e8&w=996)',
+      <div className="section flex flex-col md:flex-row" style={{
+          backgroundImage: 'url(https://img.freepik.com/free-photo/pouch-map-toy-airplane-blue-background-with-space-writing-text_23-2147958180.jpg?t=st=1740117891~exp=1740121491~hmac=e2fcdfcb5408980389f834de1141a98417ce0d2bd5e3f4612ba8f44f948363e8&w=996)',
         }}>
-        {/* Mobile Filter Toggle Button */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="md:hidden bg-blue-500 text-white p-2 mx-4 rounded-lg mb-4 mt-16  "
+          className="md:hidden bg-blue-500 text-white p-2 mx-4 rounded-lg mb-4 mt-16"
         >
           {showFilters ? 'Hide Filters' : 'Show Filters'}
         </button>
 
-        {/* Filters Section - Hidden on mobile by default */}
         <div className={`${showFilters ? 'block' : 'hidden'} md:block w-full md:w-64 lg:w-72 px-4`}>
           <Filters />
         </div>
 
-        {/* Main Content */}
-        <div className="container mx-auto p-12 flex-1 ml-2 mt-4" >
-  <div className="max-w-full mx-auto bg-white shadow-md shadow-gray-400 rounded-xl p-3">
-    <h2 className="text-xl font-bold text-blue-600 mb-2">Modify Search</h2>
-    <div className="flex flex-wrap gap-3 items-center">
-      <input
-        type="text"
-        placeholder="From Location"
-        value={fromLocation}
-        onChange={(e) => setFromLocation(e.target.value)}
-        className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <input
-        type="text"
-        placeholder="To Destination"
-        value={toDestination}
-        onChange={(e) => setToDestination(e.target.value)}
-        className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <input
-        type="number"
-        placeholder="Number of People"
-        value={numOfPeople}
-        onChange={(e) => setNumOfPeople(e.target.value)}
-        className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <input
-        type="date"
-        placeholder="Departure Date"
-        value={departureDate}
-        onChange={(e) => setDepartureDate(e.target.value)}
-        className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        min={getTodayDate()}
-      />
-      <input
-        type="date"
-        placeholder="Return Date"
-        value={returnDate}
-        onChange={(e) => {
-          const selectedDate = e.target.value;
-          if (isReturnDateValid(selectedDate)) {
-            setReturnDate(selectedDate);
-          } else {
-            setError('Return date must be on or after the departure date.');
-          }
-        }}
-        className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        min={departureDate || getTodayDate()}
-      />
-      <button
-        onClick={handleSearchUpdate}
-        className="w-full sm:w-1/3 lg:w-1/6 bg-blue-500 text-white font-semibold p-2 rounded-lg hover:bg-blue-600"
-      >
-        Update Search
-      </button>
-    </div>
-  </div>
+        <div className="container mx-auto p-12 flex-1 ml-2 mt-4">
+          <div className="max-w-full mx-auto bg-white shadow-md shadow-gray-400 rounded-xl p-3">
+            <h2 className="text-xl font-bold text-blue-600 mb-2">Modify Search</h2>
+            <div className="flex flex-wrap gap-3 items-center">
+              <input
+                type="text"
+                placeholder="From Location"
+                value={fromLocation}
+                onChange={(e) => setFromLocation(e.target.value)}
+                className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <input
+                type="text"
+                placeholder="To Destination"
+                value={toDestination}
+                onChange={(e) => setToDestination(e.target.value)}
+                className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <input
+                type="number"
+                placeholder="Number of People"
+                value={numOfPeople}
+                onChange={(e) => setNumOfPeople(e.target.value)}
+                className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <input
+                type="date"
+                placeholder="Departure Date"
+                value={departureDate}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                min={getTodayDate()}
+              />
+              <input
+                type="date"
+                placeholder="Return Date"
+                value={returnDate}
+                onChange={(e) => {
+                  const selectedDate = e.target.value;
+                  if (isReturnDateValid(selectedDate)) {
+                    setReturnDate(selectedDate);
+                  } else {
+                    setError('Return date must be on or after the departure date.');
+                  }
+                }}
+                className="w-full sm:w-1/3 lg:w-1/6 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                min={departureDate || getTodayDate()}
+              />
+              <button
+                onClick={handleSearchUpdate}
+                className="w-full sm:w-1/3 lg:w-1/6 bg-blue-500 text-white font-semibold p-2 rounded-lg hover:bg-blue-600"
+              >
+                Update Search
+              </button>
+            </div>
+          </div>
 
           <div className="mb-4 p-4 bg-white shadow rounded-lg mt-4">
             <div className="flex flex-wrap gap-4">
@@ -258,7 +247,7 @@ const FlightResults: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="flex  justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Available Flights</h2>
             <select
               value={sortBy}
@@ -269,19 +258,22 @@ const FlightResults: React.FC = () => {
               <option value="departure">Sort by Departure Time</option>
             </select>
           </div>
-          <div className="space-y-4 bg">
-            {sortFlights(currentFlights || []).map((flight) => (
+          <div className="space-y-4">
+            {sortFlights(flightDetails.flights).map((flight) => (
               <div
                 key={flight.id}
                 className="border border-gray-300 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 bg-white"
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
                   <div className="flex items-center mb-2 md:mb-0">
-                    <img
-                      src="/path-to-airline-icon.png"
-                      alt={`${flight.airline} icon`}
-                      className="w-6 h-6 mr-2"
-                    />
+                    <div className="relative w-6 h-6 mr-2">
+                      <Image
+                        src="/path-to-airline-icon.png"
+                        alt={`${flight.airline} icon`}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                     <h3 className="text-lg font-semibold text-gray-800">{flight.airline}</h3>
                   </div>
                   <div className="mb-2 md:mb-0 text-sm text-gray-600">
@@ -317,10 +309,17 @@ const FlightResults: React.FC = () => {
               </div>
             ))}
           </div>
-        
         </div>
       </div>
     </>
+  );
+};
+
+const FlightResults: React.FC = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FlightResultsContent />
+    </Suspense>
   );
 };
 
